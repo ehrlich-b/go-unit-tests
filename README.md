@@ -8,13 +8,13 @@ Dependency Injection is a design pattern that is essential when writing unit tes
 
 In Go, this generally means injecting an interface for anything that is not going to exist on your test infrastructure (i.e. filesystems, external APIs, etc). Even if (e.g.) a filesystem does exist on your unit testing machine, it's generally much easier to isolate the function/struct under test via mocking, rather than having to create actual files on disk which would be subject to (e.g.) hardware failure.
 
-See `internal/interfaces/fs.go` for an example injectable interface for a filesystem.
+See [internal/interfaces/fs.go](https://github.com/ehrlich-b/go-unit-tests/blob/main/internal/interfaces/fs.go) for an example injectable interface for a filesystem.
 
 ## Surprising things that you don't need to inject in Go
 
 Go comes with a mockable http test server. So whereas in most languages you would need to create an interface for all external web requests, in golang you can simply initialize a test server that will serve "real" responses.
 
-See `internal/service/downloader_test.go` for an example test http server.
+See [internal/service/downloader_test.go](https://github.com/ehrlich-b/go-unit-tests/blob/main/internal/service/downloader_test.go#L14) for an example test http server.
 
 I will still at times create a "external API" interface - if for some reason crafting the exact http responses from my server is difficult. This would look just like fs.go.
 
@@ -70,7 +70,7 @@ assert.Equal(t, "expected result", result)
 mockDependency.AssertCalled(t, "SomeMethod")
 ```
 
-Without a testify mock, you'd be "hand crafting" this mock class, so that it would return (e.g.) 42 under certain circumstances. This allows your tests to be much more declarative and readable.
+Without a testify mock, you'd be "hand crafting" this mock class, so that it would return (e.g.) 42 under certain circumstances. This allows your tests to be much more declarative and readable. All function setups are nice chainable one-liners (e.g.) `mockDependency.On("SomeMethod").Return(42)`
 
 A testify mock can be [written directly](https://pkg.go.dev/github.com/stretchr/testify/mock). But I do not recommend that at all. See the next section on Mockery.
 
@@ -78,4 +78,4 @@ A testify mock can be [written directly](https://pkg.go.dev/github.com/stretchr/
 
 [Mockery](https://github.com/vektra/mockery) is a command line tool that generates testify compatible mock classes. Mockery scans for any interface you've defined in code, and writes everything for you that you would have to otherwise manually write for a testify mock.
 
-See `internal/interfaces/mocks/WriteCloser.go` for an example of how much boilerplate this saves you from having to write. 
+See [internal/interfaces/mocks/WriteCloser.go](https://github.com/ehrlich-b/go-unit-tests/blob/main/internal/interfaces/mocks/WriteCloser.go) for an example of how much boilerplate this saves you from having to write. 
