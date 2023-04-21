@@ -10,6 +10,23 @@ In Go, this generally means injecting an interface for anything that is not goin
 
 See [internal/interfaces/fs.go](https://github.com/ehrlich-b/go-unit-tests/blob/main/internal/interfaces/fs.go) for an example injectable interface for a filesystem.
 
+### How?
+
+If you're familiar with unit testing in other languages, you may be familiar with the idea of a "DI container". This is hotly debated (of course) but the consensus (and my recommendation) is to [not use a DI container in go](https://stackoverflow.com/questions/41900053/is-there-a-better-dependency-injection-pattern-in-golang). Just inject interfaces "manually" through a New function.
+
+Go doesn't have constructors, but by convention you should create a function called New[StructName]. E.g. (from [downloader.go](https://github.com/ehrlich-b/go-unit-tests/blob/main/internal/service/downloader.go#L17)):
+
+```
+func NewDownloader(fs interfaces.FS, httpClient *http.Client) *Downloader {
+	return &Downloader{
+		fs:         fs,
+		httpClient: httpClient,
+	}
+}
+```
+
+Notice how we are "constructor injecting" all of our external dependencies.
+
 ## Surprising things that you don't need to inject in Go
 
 Go comes with a mockable http test server. So whereas in most languages you would need to create an interface for all external web requests, in golang you can simply initialize a test server that will serve "real" responses.
